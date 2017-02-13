@@ -1,0 +1,15 @@
+.idea
+*.iml
+**/msvc/ipch
+**/msvc/Debug*
+**/msvc/Release*
+**/msvc/.vs*
+**/msvc/*.sdf
+**/msvc/*.opensdf
+**/msvc/*.user
+**/msvc/*.suo
+**/msvc/*.aps
+**/msvc/*.pch
+**/msvc/*.txt
+**/msvc/*.db
+**/*.log
