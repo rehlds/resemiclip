@@ -7,11 +7,6 @@ extern IRehldsApi* g_RehldsApi;
 extern IRehldsHookchains* g_RehldsHookchains;
 extern bool RehldsApi_Init();
 
-typedef enum sv_delta_s {
-	sv_packet_nodelta,
-	sv_packet_delta
-} sv_delta_t;
-
 typedef struct packet_entities_s {
 	int num_entities;
 	unsigned char flags[32];
