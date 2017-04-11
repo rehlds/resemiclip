@@ -37,6 +37,11 @@
 #define REHLDS_API_VERSION_MAJOR 3
 #define REHLDS_API_VERSION_MINOR 0
 
+typedef enum sv_delta_s {
+	sv_packet_nodelta,
+	sv_packet_delta
+} sv_delta_t;
+
 //Steam_NotifyClientConnect hook
 typedef IHookChain<qboolean, IGameClient*, const void*, unsigned int> IRehldsHook_Steam_NotifyClientConnect;
 typedef IHookChainRegistry<qboolean, IGameClient*, const void*, unsigned int> IRehldsHookRegistry_Steam_NotifyClientConnect;
