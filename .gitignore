@@ -13,3 +13,4 @@
 **/msvc/*.txt
 **/msvc/*.db
 **/*.log
+**/msvc/*.opendb
