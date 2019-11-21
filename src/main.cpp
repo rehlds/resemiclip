@@ -289,7 +289,7 @@ inline bool allowDontSolid(playermove_t *pm, edict_t *pHost, int host, int j)
 									|| ((g_Config.GetEffects()
 									|| *pPlayer->GetDiff(pObject) < g_Config.GetDistance())
 									&& ((g_Config.GetTeam() == 0) ? 1
-									: (g_Config.GetTeam() == 3) ? (hostTeamId == entTeamId)
+									: (g_Config.GetTeam() == 3) ? (CSGameRules()->PlayerRelationship(HostPlayer, EntPlayer) == GR_TEAMMATE)
 									: (hostTeamId == g_Config.GetTeam()
 									&& entTeamId == g_Config.GetTeam()))
 									&& !pObject->GetDont()));
