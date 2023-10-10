@@ -1,5 +1,6 @@
 .idea
 *.iml
+/build
 **/msvc/ipch
 **/msvc/Debug*
 **/msvc/Release*
@@ -13,3 +14,4 @@
 **/msvc/*.txt
 **/msvc/*.db
 **/*.log
+**/version/appversion.h

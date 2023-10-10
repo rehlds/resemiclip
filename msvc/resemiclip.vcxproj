@@ -113,7 +113,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>
     </LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
     <TargetName>$(ProjectName)_mm</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,7 +122,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Full</Optimization>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include\;..\metamod\;..\cssdk\common\;..\cssdk\dlls\;..\cssdk\engine\;..\cssdk\pm_shared\;..\cssdk\game_shared\;..\cssdk\public\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\include\;..\metamod\;..\cssdk\common\;..\cssdk\dlls\;..\cssdk\engine\;..\cssdk\pm_shared\;..\cssdk\game_shared\;..\cssdk\public\</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -145,11 +144,25 @@
     <CustomBuildStep>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>subversion.always.run</Outputs>
+      <Outputs>build.always.run</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Inputs>subversion.always.run</Inputs>
+      <Inputs>build.always.run</Inputs>
+      <Command>echo Empty Action</Command>
+      <Message>Force build to run Pre-Build event</Message>
     </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>IF EXIST "$(ProjectDir)PreBuild.bat" (CALL "$(ProjectDir)PreBuild.bat" "$(ProjectDir)..\version\" "$(ProjectDir)..\")</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Setup version from Git revision</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(ProjectDir)PostBuild.bat" (CALL "$(ProjectDir)PostBuild.bat" "$(TargetDir)" "$(TargetName)" "$(TargetExt)" "$(ProjectDir)")</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Automatic deployment script</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -159,7 +172,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include\;..\metamod\;..\cssdk\common\;..\cssdk\dlls\;..\cssdk\engine\;..\cssdk\pm_shared\;..\cssdk\game_shared\;..\cssdk\public\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\include\;..\metamod\;..\cssdk\common\;..\cssdk\dlls\;..\cssdk\engine\;..\cssdk\pm_shared\;..\cssdk\game_shared\;..\cssdk\public\</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <StringPooling>false</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -188,14 +201,28 @@
     <CustomBuildStep>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Outputs>subversion.always.run</Outputs>
+      <Outputs>build.always.run</Outputs>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Inputs>subversion.always.run</Inputs>
+      <Inputs>build.always.run</Inputs>
+      <Command>echo Empty Action</Command>
+      <Message>Force build to run Pre-Build event</Message>
     </CustomBuildStep>
     <PostBuildEvent>
     </PostBuildEvent>
     <PostBuildEvent>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>IF EXIST "$(ProjectDir)PreBuild.bat" (CALL "$(ProjectDir)PreBuild.bat" "$(ProjectDir)..\version\" "$(ProjectDir)..\")</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Setup version from Git revision</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(ProjectDir)PostBuild.bat" (CALL "$(ProjectDir)PostBuild.bat" "$(TargetDir)" "$(TargetName)" "$(TargetExt)" "$(ProjectDir)")</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Automatic deployment script</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

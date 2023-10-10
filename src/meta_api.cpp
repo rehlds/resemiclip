@@ -3,10 +3,10 @@
 plugin_info_t Plugin_info = {
 	META_INTERFACE_VERSION,
 	"ReSemiclip",
-	"2.3.9",
-	"13/02/17",
-	"s1lent & Adidasman",
-	"http://www.dedicated-server.ru/",
+	APP_VERSION,
+	APP_COMMIT_DATE,
+	"s1lent",
+	"https://github.com/s1lentq/resemiclip/",
 	"ReSemiclip",
 	PT_CHANGELEVEL,
 	PT_ANYTIME

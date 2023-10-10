@@ -49,4 +49,11 @@
 
 typedef unsigned int string_t;		// from engine's pr_comp.h;
 
+// From engine/server.h
+typedef enum sv_delta_s
+{
+	sv_packet_nodelta,
+	sv_packet_delta,
+} sv_delta_t;
+
 #endif // MAINTYPES_H

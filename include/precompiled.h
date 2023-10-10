@@ -3,6 +3,8 @@
 #include <extdll.h>
 #include <meta_api.h>
 
+#include "version/appversion.h"
+
 #include "cbase.h"
 #include "entity_state.h"
 #include "pm_defs.h"
