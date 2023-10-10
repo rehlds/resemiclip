@@ -64,7 +64,7 @@ EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturn
 			return pCur->m_CreateFn();
 		}
 	}
-	
+
 	if ( pReturnCode )
 	{
 		*pReturnCode = IFACE_FAILED;
@@ -76,7 +76,7 @@ EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturn
 static IBaseInterface *CreateInterfaceLocal( const char *pName, int *pReturnCode )
 {
 	InterfaceReg *pCur;
-	
+
 	for(pCur=InterfaceReg::s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
 	{
 		if(strcmp(pCur->m_pName, pName) == 0)
@@ -88,12 +88,12 @@ static IBaseInterface *CreateInterfaceLocal( const char *pName, int *pReturnCode
 			return pCur->m_CreateFn();
 		}
 	}
-	
+
 	if ( pReturnCode )
 	{
 		*pReturnCode = IFACE_FAILED;
 	}
-	return NULL;	
+	return NULL;
 }
 #endif
 
@@ -107,7 +107,7 @@ static IBaseInterface *CreateInterfaceLocal( const char *pName, int *pReturnCode
 // Input  : pModuleName - module name
 //			*pName - proc name
 //-----------------------------------------------------------------------------
-//static hlds_run wants to use this function 
+//static hlds_run wants to use this function
 void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
 {
 	return GetProcAddress( GetModuleHandle(pModuleName), pName );
@@ -118,7 +118,7 @@ void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
 // Input  : pModuleName - module name
 //			*pName - proc name
 //-----------------------------------------------------------------------------
-// hlds_run wants to use this function 
+// hlds_run wants to use this function
 void *Sys_GetProcAddress( void *pModuleHandle, const char *pName )
 {
 #if defined ( _WIN32 )
@@ -126,6 +126,14 @@ void *Sys_GetProcAddress( void *pModuleHandle, const char *pName )
 #else
 	return GetProcAddress( pModuleHandle, pName );
 #endif
+}
+
+// Purpose: Returns a module handle by its name.
+// Input  : pModuleName - module name
+// Output : the module handle or NULL in case of an error
+CSysModule *Sys_GetModuleHandle(const char *pModuleName)
+{
+	return reinterpret_cast<CSysModule *>(GetModuleHandle(pModuleName));
 }
 
 //-----------------------------------------------------------------------------
@@ -170,7 +178,7 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 #elif defined(OSX)
 		printf("Error:%s\n",dlerror());
 		_snprintf( str, sizeof(str), "%s.dylib", szAbsoluteModuleName );
-		hDLL = dlopen(str, RTLD_NOW);		
+		hDLL = dlopen(str, RTLD_NOW);
 #else
 		printf("Error:%s\n",dlerror());
 		_snprintf( str, sizeof(str), "%s.so", szAbsoluteModuleName );
@@ -202,7 +210,7 @@ void Sys_UnloadModule( CSysModule *pModule )
 
 //-----------------------------------------------------------------------------
 // Purpose: returns a pointer to a function, given a module
-// Input  : module - windows HMODULE from Sys_LoadModule() 
+// Input  : module - windows HMODULE from Sys_LoadModule()
 //			*pName - proc name
 // Output : factory for this module
 //-----------------------------------------------------------------------------
@@ -216,9 +224,9 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 	return reinterpret_cast<CreateInterfaceFn>(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
 #else
 // Linux gives this error:
-//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory 
+//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
 //(CSysModule *)) (const char *, int *)':
-//../public/interface.cpp:154: ISO C++ forbids casting between 
+//../public/interface.cpp:154: ISO C++ forbids casting between
 //pointer-to-function and pointer-to-object
 //
 // so lets get around it :)
@@ -252,9 +260,9 @@ CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
 	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
 #else
 // Linux gives this error:
-//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory 
+//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
 //(const char *)) (const char *, int *)':
-//../public/interface.cpp:186: invalid static_cast from type `void *' to 
+//../public/interface.cpp:186: invalid static_cast from type `void *' to
 //type `IBaseInterface *(*) (const char *, int *)'
 //
 // so lets use the old style cast.
