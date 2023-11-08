@@ -62,7 +62,7 @@ bool CConfig::Parse_Settings(const char *str, const char *value)
 		cfg_effects = clamp(i, 0, 1);
 	}
 	else if (!strcasecmp(str, "team")) {
-		cfg_team = clamp(i, 0, 3);
+		cfg_team = clamp(i, SC_TEAM_ALL, SC_TEAM_TEAMMATE);
 	}
 	else if (!strcasecmp(str, "penetfire")) {
 		cfg_penetfire = clamp(i, 0, 1);
@@ -209,7 +209,7 @@ int Load_Config()
 
 	g_Config.SetEnable(1);
 	g_Config.SetTime(0.0f);
-	g_Config.SetTeam(3);
+	g_Config.SetTeam(SC_TEAM_TEAMMATE);
 	g_Config.SetCrouch(0);
 	g_Config.SetDistance(160.0f);
 	g_Config.SetTransparency(100);

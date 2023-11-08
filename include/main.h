@@ -7,6 +7,14 @@
 #define GET_DISTANCE(a, b)		((a - b).Length2D())
 #define GET_COLLIDE(a, b)		(abs(a.z - b.z) < 96 && (a - b).Length2D() < 96)
 
+enum
+{
+	SC_TEAM_ALL = 0,
+	SC_TEAM_T,
+	SC_TEAM_CT,
+	SC_TEAM_TEAMMATE,
+};
+
 extern int DispatchSpawn(edict_t *pEntity);
 extern int ShouldCollide(edict_t *pentTouched, edict_t *pentOther);
 extern int OnMetaAttach();

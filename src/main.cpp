@@ -285,11 +285,11 @@ inline bool allowDontSolid(playermove_t *pm, edict_t *pHost, int host, int j)
 	int entTeamId = EntPlayer->m_iTeam;
 
 	*pPlayer->GetDiff(pObject) = GET_DISTANCE(hostOrigin, entOrigin);
-	*pPlayer->GetSolid(pObject) = (hostTeamId == 3
+	*pPlayer->GetSolid(pObject) = (hostTeamId == SPECTATOR
 									|| ((g_Config.GetEffects()
 									|| *pPlayer->GetDiff(pObject) < g_Config.GetDistance())
-									&& ((g_Config.GetTeam() == 0) ? 1
-									: (g_Config.GetTeam() == 3) ? (hostTeamId == entTeamId)
+									&& ((g_Config.GetTeam() == SC_TEAM_ALL) ? 1
+									: (g_Config.GetTeam() == SC_TEAM_TEAMMATE) ? (CSGameRules()->PlayerRelationship(HostPlayer, EntPlayer) == GR_TEAMMATE)
 									: (hostTeamId == g_Config.GetTeam()
 									&& entTeamId == g_Config.GetTeam()))
 									&& !pObject->GetDont()));
@@ -428,8 +428,8 @@ void PM_Move(playermove_t *pm, int server)
 					continue;
 				}
 
-				if ((g_Config.GetTeam() == 0) ? 1
-					: (g_Config.GetTeam() == 3) ? (hostTeamId == EntPlayer->m_iTeam)
+				if ((g_Config.GetTeam() == SC_TEAM_ALL) ? 1
+					: (g_Config.GetTeam() == SC_TEAM_TEAMMATE) ? (CSGameRules()->PlayerRelationship(pCBasePlayer, EntPlayer) == GR_TEAMMATE)
 					: (hostTeamId == g_Config.GetTeam()
 					&& EntPlayer->m_iTeam == g_Config.GetTeam()))
 				{
@@ -571,7 +571,7 @@ void SVR_SemiclipOption()
 
 				g_RehldsHookchains->SV_CreatePacketEntities()->unregisterHook(&SV_CreatePacketEntities);
 				g_RehldsHookchains->SV_CreatePacketEntities()->registerHook(&SV_CreatePacketEntities, HC_PRIORITY_HIGH);
-				
+
 				g_ReGameHookchains->CBasePlayer_Spawn()->unregisterHook(&CBasePlayer_Spawn);
 				g_ReGameHookchains->CBasePlayer_Spawn()->registerHook(&CBasePlayer_Spawn, HC_PRIORITY_DEFAULT + 1);
 				g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(&CSGameRules_OnRoundFreezeEnd);
