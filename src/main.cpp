@@ -69,6 +69,20 @@ void CGameData::Init()
 	SetStartEdict(INDEXENT(0));
 }
 
+inline void ClearAllClients()
+{
+	for (int i = 0; i < g_GameData.GetMaxClients(); i++)
+	{
+		CGamePlayer *pPlayer = PLAYER_FOR_NUM(i);
+
+		if (!pPlayer) {
+			continue;
+		}
+
+		pPlayer->Player_Clear();
+	}
+}
+
 void ServerActivate_Post(edict_t *pEdictList, int edictCount, int clientMax)
 {
 	bActivated = true;
@@ -112,16 +126,7 @@ void ServerDeactivate_Post()
 	{
 		if (bActivated)
 		{
-			for (int i = 0; i < g_GameData.GetMaxClients(); i++)
-			{
-				CGamePlayer *pPlayer = PLAYER_FOR_NUM(i);
-
-				if (!pPlayer) {
-					continue;
-				}
-
-				pPlayer->Player_Clear();
-			}
+			ClearAllClients();
 		}
 
 		bInitialized = false;
@@ -256,6 +261,20 @@ void CBasePlayer_Spawn(IReGameHook_CBasePlayer_Spawn *chain, CBasePlayer *pthis)
 	chain->callNext(pthis);
 }
 
+inline bool IsTeamAllowed(CBasePlayer *HostPlayer, CBasePlayer *EntPlayer)
+{
+	auto hostTeam = HostPlayer->m_iTeam;
+
+	if (hostTeam == SPECTATOR || g_Config.GetTeam() == SC_TEAM_ALL)
+		return true;
+
+	if (g_Config.GetTeam() == SC_TEAM_TEAMMATE)
+		return (CSGameRules()->PlayerRelationship(HostPlayer, EntPlayer) == GR_TEAMMATE);
+
+	// SC_TEAM_T, SC_TEAM_CT
+	return (hostTeam == g_Config.GetTeam() && EntPlayer->m_iTeam == g_Config.GetTeam());
+}
+
 inline bool allowDontSolid(playermove_t *pm, edict_t *pHost, int host, int j)
 {
 	pHost = EDICT(host);
@@ -285,14 +304,10 @@ inline bool allowDontSolid(playermove_t *pm, edict_t *pHost, int host, int j)
 	int entTeamId = EntPlayer->m_iTeam;
 
 	*pPlayer->GetDiff(pObject) = GET_DISTANCE(hostOrigin, entOrigin);
-	*pPlayer->GetSolid(pObject) = (hostTeamId == SPECTATOR
-									|| ((g_Config.GetEffects()
-									|| *pPlayer->GetDiff(pObject) < g_Config.GetDistance())
-									&& ((g_Config.GetTeam() == SC_TEAM_ALL) ? 1
-									: (g_Config.GetTeam() == SC_TEAM_TEAMMATE) ? (CSGameRules()->PlayerRelationship(HostPlayer, EntPlayer) == GR_TEAMMATE)
-									: (hostTeamId == g_Config.GetTeam()
-									&& entTeamId == g_Config.GetTeam()))
-									&& !pObject->GetDont()));
+	*pPlayer->GetSolid(pObject) =
+		(
+			(g_Config.GetEffects() || *pPlayer->GetDiff(pObject) < g_Config.GetDistance()) && IsTeamAllowed(HostPlayer, EntPlayer) && !pObject->GetDont()
+		);
 
 	if (g_Config.GetCrouch() && pPlayer->GetSolid(IndexObject))
 	{
@@ -428,10 +443,7 @@ void PM_Move(playermove_t *pm, int server)
 					continue;
 				}
 
-				if ((g_Config.GetTeam() == SC_TEAM_ALL) ? 1
-					: (g_Config.GetTeam() == SC_TEAM_TEAMMATE) ? (CSGameRules()->PlayerRelationship(pCBasePlayer, EntPlayer) == GR_TEAMMATE)
-					: (hostTeamId == g_Config.GetTeam()
-					&& EntPlayer->m_iTeam == g_Config.GetTeam()))
+				if (IsTeamAllowed(pCBasePlayer, EntPlayer))
 				{
 					bCollide = true;
 				}
@@ -495,16 +507,7 @@ void CSGameRules_OnRoundFreezeEnd(IReGameHook_CSGameRules_OnRoundFreezeEnd *chai
 {
 	chain->callNext();
 
-	for (int i = 0; i < g_GameData.GetMaxClients(); i++)
-	{
-		CGamePlayer *pPlayer = PLAYER_FOR_NUM(i);
-
-		if (!pPlayer) {
-			continue;
-		}
-
-		pPlayer->Player_Clear();
-	}
+	ClearAllClients();
 
 	g_Config.SetCount(gpGlobals->time + g_Config.GetTime());
 
@@ -558,16 +561,7 @@ void SVR_SemiclipOption()
 			}
 			else
 			{
-				for (int i = 0; i < g_GameData.GetMaxClients(); i++)
-				{
-					CGamePlayer *pPlayer = PLAYER_FOR_NUM(i);
-
-					if (!pPlayer) {
-						continue;
-					}
-
-					pPlayer->Player_Clear();
-				}
+				ClearAllClients();
 
 				g_RehldsHookchains->SV_CreatePacketEntities()->unregisterHook(&SV_CreatePacketEntities);
 				g_RehldsHookchains->SV_CreatePacketEntities()->registerHook(&SV_CreatePacketEntities, HC_PRIORITY_HIGH);
