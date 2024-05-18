@@ -558,24 +558,30 @@ void SVR_SemiclipOption()
 	}
 	else
 	{
-		if (!strcasecmp(argv, "time"))
+		if (!strcasecmp(argv, "semiclip"))
+		{
+			ClearAllClients();
+
+			g_RehldsHookchains->SV_CreatePacketEntities()->unregisterHook(&SV_CreatePacketEntities);
+			g_RehldsHookchains->SV_CreatePacketEntities()->registerHook(&SV_CreatePacketEntities, HC_PRIORITY_HIGH);
+
+			g_ReGameHookchains->CBasePlayer_Spawn()->unregisterHook(&CBasePlayer_Spawn);
+			g_ReGameHookchains->CBasePlayer_Spawn()->registerHook(&CBasePlayer_Spawn, HC_PRIORITY_DEFAULT + 1);
+			g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(&CSGameRules_OnRoundFreezeEnd);
+
+			if (g_Config.GetPenetFire())
+			{
+				g_ReGameHookchains->CBasePlayer_TraceAttack()->unregisterHook(&CBasePlayer_TraceAttack);
+				g_ReGameHookchains->CBasePlayer_TraceAttack()->registerHook(&CBasePlayer_TraceAttack, HC_PRIORITY_DEFAULT + 1);
+			}
+
+			g_pFunctionTable->pfnPM_Move = PM_Move;
+			g_pNewFunctionTable->pfnShouldCollide = ShouldCollide;
+		}
+		else if (!strcasecmp(argv, "time"))
 		{
 			if (g_Config.GetTime()) {
 				g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->registerHook(&CSGameRules_OnRoundFreezeEnd, HC_PRIORITY_DEFAULT + 1);
-			}
-			else
-			{
-				ClearAllClients();
-
-				g_RehldsHookchains->SV_CreatePacketEntities()->unregisterHook(&SV_CreatePacketEntities);
-				g_RehldsHookchains->SV_CreatePacketEntities()->registerHook(&SV_CreatePacketEntities, HC_PRIORITY_HIGH);
-
-				g_ReGameHookchains->CBasePlayer_Spawn()->unregisterHook(&CBasePlayer_Spawn);
-				g_ReGameHookchains->CBasePlayer_Spawn()->registerHook(&CBasePlayer_Spawn, HC_PRIORITY_DEFAULT + 1);
-				g_ReGameHookchains->CSGameRules_OnRoundFreezeEnd()->unregisterHook(&CSGameRules_OnRoundFreezeEnd);
-
-				g_pFunctionTable->pfnPM_Move = PM_Move;
-				g_pNewFunctionTable->pfnShouldCollide = ShouldCollide;
 			}
 		}
 		else if (!strcasecmp(argv, "penetfire"))
