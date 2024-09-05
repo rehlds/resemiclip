@@ -233,7 +233,7 @@ state_update:
 				}
 			}
 
-			if (pEnt->v.aiment && pEnt->v.movetype == MOVETYPE_FOLLOW && pEnt->v.aiment != pHost)
+			if (pEnt->v.aiment && pEnt->v.movetype == MOVETYPE_FOLLOW && pEnt->v.aiment != pHost && pEnt->v.rendermode == kRenderNormal)
 			{
 				int playerIndex = EDICT_NUM(pEnt->v.aiment);
 
